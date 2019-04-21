@@ -3,7 +3,7 @@ Text encryption and description, using various mechanisms like AES-GCM, AES-CBC,
 
 ## AES-GCM
 ### Config
-c.Init({cipher-key}, {nonce})
+c.Config({cipher-key}, {nonce})
 - cipher-key is required
 - nonce/salt is optional, but it is required for Encrypt and Decrypt methods
 
@@ -12,7 +12,7 @@ c.Init({cipher-key}, {nonce})
 ````
 var c crypto.AESGCM
 
-err := c.Init("0123456789ABCDEF", "001234567890001234567890")
+err := c.Config("0123456789ABCDEF", "001234567890001234567890")
 
 e, err := c.Encrypt("Hello World!")
 fmt.Println("Encrypted:", e, err)
@@ -24,7 +24,7 @@ fmt.Println("Decrypted:", d, err)
 ````
 var c crypto.AESGCM
 
-err := c.Init("0123456789ABCDEF", "")
+err := c.Config("0123456789ABCDEF", "")
 
 nonce := "00123456789abb1234567890"
 en, err := c.EncryptWithNonce("Hello World!", nonce)

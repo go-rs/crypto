@@ -12,7 +12,7 @@ import (
 )
 
 // Reference: https://golang.org/pkg/crypto/cipher
-//Reference to: https://software.intel.com/en-us/articles/aes-gcm-encryption-performance-on-intel-xeon-e5-v3-processors
+// Reference: https://software.intel.com/en-us/articles/aes-gcm-encryption-performance-on-intel-xeon-e5-v3-processors
 
 type AESGCM struct {
 	aesgcm cipher.AEAD
@@ -22,7 +22,7 @@ type AESGCM struct {
 // The key argument should be the AES key, either 16 or 32 bytes
 // to select AES-128 or AES-256.
 // salt/nonce should be optional
-func (c *AESGCM) Init(cipherKey string, salt string) error {
+func (c *AESGCM) Config(cipherKey string, salt string) error {
 	var block cipher.Block
 	var err error
 
