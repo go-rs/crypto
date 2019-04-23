@@ -22,74 +22,88 @@ type AESGCM struct {
 // The key argument should be the AES key, either 16 or 32 bytes
 // to select AES-128 or AES-256.
 // salt/nonce should be optional
-func (c *AESGCM) Config(cipherKey string, salt string) error {
+func (c *AESGCM) Config(cipherKey string, salt string) (err error) {
 	var block cipher.Block
-	var err error
 
 	block, err = aes.NewCipher([]byte(cipherKey))
 	if err != nil {
-		return err
+		return
 	}
 
 	// should use NewGCM, which is more resistant to misuse
 	c.aesgcm, err = cipher.NewGCM(block)
 	if err != nil {
-		return err
+		return
 	}
 
 	if salt != "" {
 		c.nonce, err = hex.DecodeString(salt)
 		if err != nil {
-			return err
+			return
 		}
 	}
-	return nil
+	return
 }
 
 /**
  * Encrypt text
  */
-func (c *AESGCM) Encrypt(text string) (string, error) {
-	return hex.EncodeToString(c.aesgcm.Seal(nil, c.nonce, []byte(text), nil)), nil
+func (c *AESGCM) Encrypt(text string) (val string, err error) {
+	val = hex.EncodeToString(c.aesgcm.Seal(nil, c.nonce, []byte(text), nil))
+	return
 }
 
 /**
  * Encrypt text with nonce
  */
-func (c *AESGCM) EncryptWithNonce(text string, nonce string) (string, error) {
+func (c *AESGCM) EncryptWithNonce(text string, nonce string) (val string, err error) {
 	data := []byte(text)
 	_nonce, err := hex.DecodeString(nonce)
 	if err != nil {
-		println(err.Error())
-		return "", err
+		return
 	}
-	return hex.EncodeToString(c.aesgcm.Seal(nil, _nonce, data, nil)), nil
+
+	val = hex.EncodeToString(c.aesgcm.Seal(nil, _nonce, data, nil))
+	return
 }
 
 /**
  * Decrypt string
  */
-func (c *AESGCM) Decrypt(text string) (string, error) {
+func (c *AESGCM) Decrypt(text string) (val string, err error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
 		return "", err
 	}
+
 	data, err = c.aesgcm.Open(nil, c.nonce, data, nil)
-	return string(data), err
+	if err != nil {
+		return
+	}
+
+	val = string(data)
+	return
 }
 
 /**
  * Decrypt string with nonce
  */
-func (c *AESGCM) DecryptWithNonce(text string, nonce string) (string, error) {
+func (c *AESGCM) DecryptWithNonce(text string, nonce string) (val string, err error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
-		return "", err
+		return
 	}
+
 	_nonce, err := hex.DecodeString(nonce)
 	if err != nil {
-		return "", err
+		return
 	}
+
 	data, err = c.aesgcm.Open(nil, _nonce, data, nil)
-	return string(data), err
+	if err != nil {
+		return
+	}
+
+	val = string(data)
+	return
 }
